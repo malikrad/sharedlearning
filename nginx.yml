@@ -1,0 +1,8 @@
+- hosts: nexus
+  roles:
+    - common
+    - nexus
+- hosts: nginx
+  roles:
+    - common
+    - nginx

@@ -1,0 +1,6 @@
+- name: Ensure group "nexus" exists
+  group:
+    name: nexus
+    state: present
+    gid: 200
+  become: yes

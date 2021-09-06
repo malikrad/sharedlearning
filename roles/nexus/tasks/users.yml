@@ -1,0 +1,7 @@
+- name: Add the user 'nexus' with a specific uid and a primary group
+  user:
+    name: nexus
+    comment: Nexus Repository User
+    uid: 200
+    group: nexus
+  become: yes

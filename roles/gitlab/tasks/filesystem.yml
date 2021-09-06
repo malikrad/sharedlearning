@@ -1,0 +1,5 @@
+- name: Manage directory for gitlab
+  file:
+    path: /srv/gitlab
+    state: directory
+    mode: '0750'

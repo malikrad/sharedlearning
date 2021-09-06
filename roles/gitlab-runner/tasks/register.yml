@@ -1,0 +1,5 @@
+## Make url and registration-token dynamically set from variables file
+- name: Register gitlab-runner with server
+  command: docker run --rm -v /srv/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner register --non-interactive --executor "docker" --docker-image alpine:latest  --docker-privileged --url http://172.17.0.2/ --registration-token  3FEEeKN1_yNaZ8D7ER15 --description "docker-runner" --run-untagged="true" --locked="false"
+  args:
+    creates: /srv/gitlab-runner/config/config.toml

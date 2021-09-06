@@ -1,0 +1,16 @@
+- name: Install and manage gitlab-ce
+  docker_container:
+    name: gitlab
+    image: gitlab/gitlab-ce:latest
+    state: started
+    pull: true
+    restart_policy: unless-stopped
+    hostname: ip-172-31-1-127.eu-west-1.compute.internal
+    volumes:
+    - "/srv/gitlab/config:/etc/gitlab"
+    - "/srv/gitlab/logs:/var/log/gitlab"
+    - "/srv/gitlab/data:/var/opt/gitlab"
+    ports:
+    - "443:443"
+    - "8082:80"
+    - "2222:22"

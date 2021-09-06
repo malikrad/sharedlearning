@@ -1,0 +1,53 @@
+
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+    update_only: yes
+  become: yes
+
+
+- name: "Force Install 'docker' pip module"
+  pip:
+    name: docker
+    executable: pip3
+    #extra_args: "--no-index --find-links=/usr/bin/python3"
+    state: forcereinstall
+  become: yes
+
+- name: "Force Install 'docker' pip module"
+  pip:
+    name: docker-compose
+    executable: pip3
+    #extra_args: "--no-index --find-links=/usr/bin/python3"
+    state: forcereinstall
+  become: yes
+
+- name: Ensure a list of yum packages are installed
+  yum:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+    - python-pip
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - amazon-linux-extras
+  become: yes
+
+- name: Add extras repository
+  shell: yum-config-manager --enable extras
+  become: yes
+
+- name: Install docker-ce (centos) via amazon-linux-extras packages
+  shell: "amazon-linux-extras install docker=18.06.1 -y"
+  become: yes
+
+- name: Enable Docker CE service at startup
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes

@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS linux in Ireland. Based on prebuilt Gitlab-Server
+Resources:
+  Ec2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t3a.large
+      SubnetId: subnet-021a75cb6bb56ddb7
+      SecurityGroupIds: 
+      - !GetAtt InstanceSecurityGroup.GroupId
+      KeyName: sharedlearning
+      ImageId: 'ami-03f5e76d3a86c5458'
+      Tags:
+      - Key: Name
+        Value: SharedLearning-CICD
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group which only accepts traffic from the loadbalancer.
+  LoadbalancerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and Webserveraccess
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
+  InboundruleLbHTTP:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt InstanceSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: '80'
+      ToPort: '80'
+      SourceSecurityGroupId: !GetAtt LoadbalancerSecurityGroup.GroupId 
+  GitlabLoadbalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties: 
+      IpAddressType: ipv4
+      Name: GitlabLoadbalancer
+      Scheme: internet-facing
+      SecurityGroups: 
+        - !GetAtt LoadbalancerSecurityGroup.GroupId
+      Subnets: 
+        - subnet-021a75cb6bb56ddb7
+        - subnet-04f17f5758d88b081
+      Type: application
+  GitlabTarget:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties: 
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: "/"
+      HealthCheckPort: "80"
+      HealthCheckProtocol: "HTTP"
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      Name: "Gitlab"
+      Port: 80
+      Protocol: "HTTP"
+      ProtocolVersion: "HTTP1"
+      Targets: 
+      - Id: !Ref Ec2Instance
+      TargetType: "instance"
+      UnhealthyThresholdCount: 2
+      VpcId: "vpc-096e0868fe59278c5"
+  GitlabListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      DefaultActions: 
+        - Type: "forward"
+          TargetGroupArn: !Ref GitlabTarget
+      LoadBalancerArn: !Ref GitlabLoadbalancer
+      Port: 80
+      Protocol: 'HTTP'
+  GitlabListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      Certificates: 
+        - CertificateArn: arn:aws:acm:eu-west-1:861976376325:certificate/86a6410b-e824-4836-8e5a-f9803e0529f2
+      DefaultActions: 
+        - Type: "forward"
+          TargetGroupArn: !Ref GitlabTarget
+      LoadBalancerArn: !Ref GitlabLoadbalancer
+      Port: 443
+      Protocol: 'HTTPS'

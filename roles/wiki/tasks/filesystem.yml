@@ -1,0 +1,6 @@
+- name: Manage directory for wiki
+  file:
+    path: /srv/wiki
+    state: directory
+    mode: '0750'
+   

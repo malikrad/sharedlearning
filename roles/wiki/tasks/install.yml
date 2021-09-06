@@ -1,0 +1,15 @@
+- name: Install and manage wiki 
+  docker_container:
+    name: wiki
+    image: ghcr.io/linuxserver/wikijs
+    pull: true
+    restart_policy: unless-stopped
+    env:
+      PUID: "0"
+      PGID: "0"
+      TZ: "Europe/London"
+    volumes:
+    - "/srv/wiki/config:/config"
+    - "/srv/wiki/data:/data"
+    ports:
+    - "3000:3000"

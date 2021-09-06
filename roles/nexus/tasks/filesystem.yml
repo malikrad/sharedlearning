@@ -1,0 +1,7 @@
+- name: Manage directory for Nexus
+  file:
+    path: /srv/nexus-data
+    state: directory
+    mode: '0750'
+    owner: nexus
+    group: nexus

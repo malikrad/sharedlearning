@@ -1,0 +1,4 @@
+- hosts: wiki
+  roles:
+    #- common
+    - wiki

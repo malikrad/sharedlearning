@@ -1,0 +1,21 @@
+- hosts: all
+- name: 
+    include_vars: 
+    - name: packages
+        dir: roles/common/vars
+  tasks:
+    - name: Add CentOS Docker repository
+      yum_repository:
+        name: docker
+        description: Docker CentOS repository
+        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+    - name: ensure a list of packages installed
+      include_vars:
+        dir: roles/common/vars
+      yum:
+        name: "{{ packages }}"
+    - name: Make sure the docker service is enabled and started
+      systemd:
+        name: docker
+        state: started
+        enabled: yes

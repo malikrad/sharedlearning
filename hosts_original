@@ -1,0 +1,14 @@
+[artifactory]
+localhost           ansible_connection=local
+
+[gitlab-runner]
+localhost           ansible_connection=local
+
+[gitlab]
+localhost           ansible_connection=local
+
+[postgres]
+localhost           ansible_connection=local
+
+[sonarqube]
+localhost           ansible_connection=local

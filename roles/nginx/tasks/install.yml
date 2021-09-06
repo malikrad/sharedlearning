@@ -1,0 +1,37 @@
+
+
+- name: update yum
+      name=* it means all packages
+  yum: name=* state=latest
+
+- name: Enable amazon-linux-extras packages
+
+  shell: 
+    "amazon-linux-extras install nginx1 -y"
+  become: true
+
+
+#- name: start nginx
+  # service:
+  #    name: nginx
+    #   state: started
+
+- name: copy the nginx config file and restart nginx
+  copy:
+    src: ./nginx.cfg
+    dest: /etc/nginx/nginx.conf
+  become: yes
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+  become: yes
+
+
+
+
+
+
+
+

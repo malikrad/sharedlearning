@@ -1,0 +1,13 @@
+[gitlab]
+13.53.194.81
+[gitlab-runner]
+13.53.194.81
+[nginx]
+13.53.194.81
+[wiki]
+13.53.194.81
+
+#localhost           
+#ansible_connection=local
+
+

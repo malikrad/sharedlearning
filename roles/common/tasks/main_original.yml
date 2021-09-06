@@ -1,0 +1,21 @@
+- name: "Force Install 'docker' pip module"
+  pip:
+    name: docker
+    extra_args: "--no-index --find-links=ansible_python_interpreter=/usr/bin/python3"
+    state: forcereinstall
+
+
+
+- name: Include common variables
+  include_vars:
+    dir: vars
+
+# - name: ensure a list of packages installed
+#   yum:
+#     name: "{{ packages }}"
+
+- name: Make sure the docker service is enabled and started
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
